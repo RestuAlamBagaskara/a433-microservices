@@ -11,7 +11,7 @@ services:
 
   # Layanan aplikasi utama
   item-app:
-    image: ghcr.io/restualambagaskara/item-app:v1  # Menggunakan image aplikasi dari GitHub Container Registry
+    image: restualambagaskara/item-app:v1  # Menggunakan image aplikasi dari GitHub Container Registry
     ports:
       - "80:8080"  # Menghubungkan port 8080 di dalam container ke port 80 di host
     depends_on:

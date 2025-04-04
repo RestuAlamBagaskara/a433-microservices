@@ -1,0 +1,26 @@
+# Menentukan versi Docker Compose yang digunakan
+version: "3.8"
+
+services:
+  # Layanan database MongoDB
+  item-db:
+    image: mongo:3  # Menggunakan MongoDB versi 3
+    volumes:
+      - app-db:/data/db  # Menyimpan data database di volume Docker agar tidak hilang saat container dihentikan
+    restart: always  # Container akan otomatis restart jika terjadi error atau dihentikan
+
+  # Layanan aplikasi utama
+  item-app:
+    image: ghcr.io/restualambagaskara/item-app:v1  # Menggunakan image aplikasi dari GitHub Container Registry
+    ports:
+      - "80:8080"  # Menghubungkan port 8080 di dalam container ke port 80 di host
+    depends_on:
+      - item-db  # Menentukan bahwa aplikasi ini harus menunggu MongoDB berjalan terlebih dahulu
+    environment:
+      NODE_ENV: production  # Menjalankan aplikasi dalam mode produksi
+      DB_HOST: item-db  # Menentukan hostname database agar aplikasi bisa terhubung ke MongoDB
+    restart: always  # Jika container berhenti, maka akan otomatis dijalankan kembali
+
+# Mendefinisikan volume untuk menyimpan data MongoDB agar tetap ada meskipun container dihentikan atau dihapus
+volumes:
+  app-db:

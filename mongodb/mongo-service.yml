@@ -1,0 +1,10 @@
+apiVersion: v1  # Versi API Kubernetes yang digunakan untuk objek Service
+kind: Service  # Jenis objek yang didefinisikan adalah Service
+metadata:
+  name: mongo-service  # Nama Service ini, yang digunakan untuk mengakses MongoDB
+spec:
+  selector:
+    app: mongo  # Selektor untuk memilih pod yang memiliki label "app: mongo"
+  ports:
+    - port: 27017  # Port yang digunakan oleh service ini, yang akan mengarah ke port 27017 pada pod MongoDB
+  clusterIP: None  # Menentukan bahwa Service ini akan menjadi Headless Service (tanpa ClusterIP)

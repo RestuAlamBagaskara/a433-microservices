@@ -1,0 +1,34 @@
+apiVersion: apps/v1      # Versi API Kubernetes untuk objek Deployment
+kind: Deployment         # Jenis objek yang akan didefinisikan, yaitu Deployment
+metadata:
+  name: karsajobs-backend  # Nama Deployment ini, yang akan digunakan untuk mengelola aplikasi backend
+spec:
+  replicas: 1             # Jumlah pod yang ingin dijalankan, di sini hanya 1 pod untuk aplikasi backend
+  selector:
+    matchLabels:
+      app: karsajobs-backend  # Selektor untuk memilih pod-pod yang akan dikelola oleh Deployment ini berdasarkan label
+  template:              # Template pod yang akan dijalankan
+    metadata:
+      labels:
+        app: karsajobs-backend  # Label untuk pod, untuk mencocokkan dengan selector di atas
+    spec:
+      containers:
+        - name: karsajobs-backend  # Nama kontainer, yang akan digunakan untuk mengidentifikasi kontainer ini dalam pod
+          image: ghcr.io/restualambagaskara/karsajobs:latest  # Image kontainer yang akan dijalankan, di sini menggunakan image dari GitHub Container Registry
+          env:  # Bagian untuk mendefinisikan variabel lingkungan (environment variables) yang digunakan dalam kontainer
+            - name: APP_PORT  # Variabel lingkungan untuk menentukan port aplikasi, diset ke "8080"
+              value: "8080"  # Menetapkan port aplikasi ke 8080
+            - name: MONGO_HOST  # Variabel lingkungan untuk menentukan host MongoDB
+              value: "mongo-service"  # Nilai ini mengarah ke service yang bernama "mongo-service", yang mengarah ke MongoDB
+            - name: MONGO_USER  # Variabel lingkungan untuk menentukan username MongoDB
+              valueFrom:  # Mengambil nilai variabel dari secret yang telah didefinisikan
+                secretKeyRef:
+                  name: mongo-secret  # Nama secret yang berisi username dan password MongoDB
+                  key: MONGO_ROOT_USERNAME  # Mengambil nilai dari key "MONGO_ROOT_USERNAME" di dalam secret
+            - name: MONGO_PASS  # Variabel lingkungan untuk menentukan password MongoDB
+              valueFrom:  # Mengambil nilai password dari secret
+                secretKeyRef:
+                  name: mongo-secret  # Nama secret yang berisi username dan password MongoDB
+                  key: MONGO_ROOT_PASSWORD  # Mengambil nilai dari key "MONGO_ROOT_PASSWORD" di dalam secret
+          ports:
+            - containerPort: 8080  # Menentukan port yang akan diekspos oleh kontainer ini, yaitu port 8080

@@ -1,0 +1,44 @@
+apiVersion: apps/v1  # Versi API Kubernetes yang digunakan untuk objek StatefulSet
+kind: StatefulSet  # Jenis objek yang didefinisikan adalah StatefulSet
+metadata:
+  name: mongo  # Nama StatefulSet ini, yang akan digunakan untuk mengelola pod MongoDB
+spec:
+  serviceName: "mongo-service"  # Nama service yang digunakan untuk mengelola alamat DNS pod-pod MongoDB
+  replicas: 1  # Jumlah replika pod MongoDB yang diinginkan, di sini hanya 1 pod MongoDB
+  selector:
+    matchLabels:
+      app: mongo  # Selector untuk memilih pod-pod yang akan dikelola oleh StatefulSet ini berdasarkan label
+  template:  # Template pod yang akan dijalankan
+    metadata:
+      labels:
+        app: mongo  # Label untuk pod, untuk mencocokkan dengan selector di atas
+    spec:
+      containers:
+        - name: mongo  # Nama kontainer, yang akan digunakan untuk mengidentifikasi kontainer ini dalam pod
+          image: mongo:3  # Menggunakan image MongoDB versi 3
+          volumeMounts:  # Volume yang dipasang di kontainer MongoDB
+            - name: mongo-persistent-storage  # Nama volume untuk penyimpanan data yang bersifat persisten
+              mountPath: /data/db  # Lokasi dalam kontainer di mana data MongoDB akan disimpan
+            - name: mongo-configmap
+              mountPath: /config
+            - name: mongo-credentials  # Nama volume untuk kredensial (username dan password)
+              mountPath: /etc/mongo-credentials  # Lokasi di dalam kontainer untuk memasang kredensial MongoDB
+              readOnly: true  # Mengatur volume ini hanya bisa dibaca
+          env:  # Menentukan variabel lingkungan yang digunakan untuk inisialisasi MongoDB
+            - name: MONGO_INITDB_ROOT_USERNAME_FILE  # Variabel untuk file yang berisi username root MongoDB
+              value: /etc/mongo-credentials/MONGO_ROOT_USERNAME  # File kredensial MongoDB untuk username
+            - name: MONGO_INITDB_ROOT_PASSWORD_FILE  # Variabel untuk file yang berisi password root MongoDB
+              value: /etc/mongo-credentials/MONGO_ROOT_PASSWORD  # File kredensial MongoDB untuk password
+      volumes:  # Volume yang digunakan oleh pod MongoDB
+        - name: mongo-persistent-storage  # Nama volume untuk penyimpanan data persisten MongoDB
+          persistentVolumeClaim:
+            claimName: mongo-pvc  # PVC (Persistent Volume Claim) yang digunakan untuk mengklaim storage
+        - name: mongo-configmap
+          configMap:
+            name: mongo-configmap  # dari nama objek ConfigMap yang dibuat
+            items: 
+            - key: mongo.conf
+              path: mongo.conf
+        - name: mongo-credentials  # Nama volume untuk kredensial MongoDB
+          secret:
+            secretName: mongo-secret  # Mengambil kredensial dari Secret dengan nama mongo-secret

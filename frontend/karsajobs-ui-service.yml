@@ -1,0 +1,12 @@
+apiVersion: v1                  # Menentukan versi API Kubernetes yang digunakan untuk objek Service
+kind: Service                    # Jenis objek yang didefinisikan, dalam hal ini Service
+metadata:
+  name: karsajobs-ui-service     # Nama dari Service ini. Nama ini digunakan untuk mengenali objek ini di Kubernetes
+spec:
+  selector:
+    app: karsajobs-ui            # Selector yang digunakan untuk memilih pod-pod yang akan dilayani oleh Service ini. Service ini akan memilih pod dengan label "app: karsajobs-ui"
+  ports:
+    - protocol: TCP              # Protokol yang digunakan oleh Service ini. Di sini, menggunakan TCP untuk komunikasi
+      port: 8000                  # Port yang akan diekspos di Service ini. Ini adalah port yang dapat diakses oleh pengguna atau aplikasi lain
+      targetPort: 8000            # Port di dalam container yang akan diteruskan oleh Service. Ini adalah port tempat aplikasi frontend (karsajobs-ui) berjalan di dalam container
+  type: NodePort                  # Jenis Service ini. NodePort memungkinkan Service ini dapat diakses dari luar cluster menggunakan port yang terhubung di node cluster

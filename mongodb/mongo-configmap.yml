@@ -1,0 +1,8 @@
+apiVersion: v1  # Versi API Kubernetes yang digunakan untuk objek ConfigMap. 'v1' adalah versi stabil.
+kind: ConfigMap  # Jenis objek Kubernetes yang digunakan untuk menyimpan data konfigurasi sebagai pasangan key-value.
+metadata:
+  name: mongo-configmap  # Nama ConfigMap ini. Digunakan untuk mengidentifikasi objek ConfigMap ini di dalam cluster Kubernetes.
+data:
+  mongo.conf: |  # Data yang disimpan dalam ConfigMap. Di sini, kita menyimpan sebuah file konfigurasi MongoDB.
+    storage:  # Bagian konfigurasi MongoDB untuk storage.
+      dbPath: /data/db  # Menetapkan direktori di dalam pod untuk menyimpan data MongoDB. Dalam hal ini, data disimpan di /data/db.

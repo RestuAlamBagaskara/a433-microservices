@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: PersistentVolume  # Jenis objek Kubernetes yang digunakan untuk mendefinisikan volume penyimpanan yang persisten.
+metadata:
+  name: mongo-pv  # Nama PersistentVolume ini. Nama ini digunakan untuk mengidentifikasi PV dalam cluster.
+spec:
+  storageClassName: manual    # nama storage class = manual
+  capacity:
+    storage: 1Gi  # Kapasitas penyimpanan yang disediakan oleh PV ini, yaitu 1 GiB (Gigabyte).
+  accessModes:
+    - ReadWriteOnce  # Mode akses untuk volume ini. 'ReadWriteOnce' berarti volume hanya dapat di-mount satu kali dalam mode baca/tulis.
+  hostPath:
+    path: /mnt/data  # Lokasi pada host (mesin fisik atau virtual) yang menyimpan data MongoDB. Dalam hal ini, data akan disimpan di /mnt/data/mongo pada mesin node Kubernetes.
+---
+apiVersion: v1
+kind: PersistentVolumeClaim  # Jenis objek yang digunakan untuk membuat klaim terhadap PersistentVolume.
+metadata:
+  name: mongo-pvc  # Nama PVC ini.
+spec:
+  storageClassName: manual    # nama storage class = manual
+  accessModes:
+    - ReadWriteOnce  # Mode akses untuk PVC ini, sesuai dengan yang ada di PV, yaitu ReadWriteOnce.
+  resources:
+    requests:
+      storage: 1Gi  # Menyatakan bahwa PVC ini memerlukan volume dengan kapasitas penyimpanan 1 GiB.

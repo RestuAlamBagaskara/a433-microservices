@@ -1,0 +1,22 @@
+apiVersion: apps/v1           # Menentukan versi API Kubernetes yang digunakan untuk objek Deployment
+kind: Deployment              # Jenis objek yang didefinisikan, dalam hal ini Deployment
+metadata:
+  name: karsajobs-ui          # Nama dari Deployment ini. Nama ini digunakan untuk mengenali objek ini di Kubernetes
+spec:
+  replicas: 1                 # Menentukan jumlah replika pod yang ingin dijalankan. Di sini, hanya satu replika yang dijalankan
+  selector:
+    matchLabels:
+      app: karsajobs-ui       # Selector yang digunakan untuk memilih pod yang akan dikelola oleh Deployment ini
+  template:
+    metadata:
+      labels:
+        app: karsajobs-ui     # Label yang digunakan untuk menandai pod-pod yang dikelola oleh Deployment ini
+    spec:
+      containers:
+        - name: karsajobs-ui  # Nama dari container yang akan dijalankan dalam pod
+          image: ghcr.io/restualambagaskara/karsajobs-ui:latest # Image container yang akan digunakan, di sini menggunakan image dari GitHub Container Registry
+          env:
+            - name: VUE_APP_BACKEND     # Variabel lingkungan untuk menyimpan URL backend
+              value: "http://karsajobs-service:8080"  # URL backend yang digunakan oleh frontend UI, dalam hal ini langsung menggunakan IP service karsajobs-service
+          ports:
+            - containerPort: 8000    # Port yang akan dibuka oleh container di dalam pod untuk menerima traffic. Di sini, port 8080
